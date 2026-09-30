@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mysql-order
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: mysql-order
+
+  template:
+    metadata:
+      labels:
+        app: mysql-order
+
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+
+          ports:
+            - containerPort: 3306
+
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "2004"
+
+            - name: MYSQL_DATABASE
+              value: "k8s_order_db"
+
+          volumeMounts:
+            - name: order-mysql-storage
+              mountPath: /var/lib/mysql
+
+      volumes:
+        - name: order-mysql-storage
+          persistentVolumeClaim:
+            claimName: order-mysql-pvc
